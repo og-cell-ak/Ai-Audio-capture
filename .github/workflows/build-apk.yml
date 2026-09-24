@@ -20,18 +20,20 @@ jobs:
           mkdir project
           unzip -q AI-Audio-Capture-Android.zip -d project
 
-      - name: Find project directory
-        run: |
-          echo "Extracted files:"
-          find project -maxdepth 3 -type f | head -100
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-      - name: Make Gradle executable
-        run: |
-          chmod +x project/AI-Audio-Capture-Android/gradlew
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6'
 
-      - name: Build debug APK
+      - name: Build APK
         working-directory: project/AI-Audio-Capture-Android
-        run: ./gradlew assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
