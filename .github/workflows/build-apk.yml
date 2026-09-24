@@ -1,0 +1,40 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "AI-Audio-Capture-Android.zip"
+      - ".github/workflows/build-apk.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: |
+          mkdir project
+          unzip -q AI-Audio-Capture-Android.zip -d project
+
+      - name: Find project directory
+        run: |
+          echo "Extracted files:"
+          find project -maxdepth 3 -type f | head -100
+
+      - name: Make Gradle executable
+        run: |
+          chmod +x project/AI-Audio-Capture-Android/gradlew
+
+      - name: Build debug APK
+        working-directory: project/AI-Audio-Capture-Android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Audio-Capture-APK
+          path: project/AI-Audio-Capture-Android/app/build/outputs/apk/debug/*.apk
