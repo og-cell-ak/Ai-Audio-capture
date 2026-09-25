@@ -1,10 +1,10 @@
-name: Build Android APK
+name: Build Android APK V3
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "AI-Audio-Capture-Diagnostic-V2.zip"
+      - "AI-Audio-Capture-Diagnostic-V3.zip"
       - ".github/workflows/build-apk.yml"
 
 jobs:
@@ -15,11 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract Diagnostic V2 project
+      - name: Extract V3 project
         run: |
           rm -rf project
           mkdir project
-          unzip -q AI-Audio-Capture-Diagnostic-V2.zip -d project
+          unzip -q AI-Audio-Capture-Diagnostic-V3.zip -d project
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -36,12 +36,12 @@ jobs:
       - name: Check Gradle
         run: gradle --version
 
-      - name: Build Diagnostic V2 APK
+      - name: Build APK
         working-directory: project
         run: gradle assembleDebug --no-daemon
 
-      - name: Upload Diagnostic V2 APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: AI-Audio-Capture-Diagnostic-V2
+          name: AI-Audio-Capture-V3-APK
           path: project/app/build/outputs/apk/debug/*.apk
