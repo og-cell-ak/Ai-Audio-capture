@@ -1,10 +1,10 @@
-name: Build Android APK V4
+name: Build Android APK V4.2
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "AI-Audio-Capture-Diagnostic-V4.zip"
+      - "AI-Audio-Capture-Diagnostic-V4.2.zip"
       - ".github/workflows/build-apk.yml"
 
 jobs:
@@ -18,13 +18,13 @@ jobs:
       - name: Check ZIP exists
         run: |
           ls -lh
-          test -f AI-Audio-Capture-Diagnostic-V4.zip
+          test -f AI-Audio-Capture-Diagnostic-V4.2.zip
 
-      - name: Extract V4 project
+      - name: Extract V4.2 project
         run: |
           rm -rf project
           mkdir project
-          unzip -q AI-Audio-Capture-Diagnostic-V4.zip -d project
+          unzip -q AI-Audio-Capture-Diagnostic-V4.2.zip -d project
 
       - name: Show project structure
         run: |
@@ -43,14 +43,16 @@ jobs:
           echo "$PWD/gradle-9.6.1/bin" >> "$GITHUB_PATH"
 
       - name: Check Gradle
-        run: gradle --version
+        run: |
+          gradle --version
 
-      - name: Build V4 APK
+      - name: Build V4.2 APK
         working-directory: project
-        run: gradle assembleDebug --no-daemon
+        run: |
+          gradle assembleDebug --no-daemon
 
-      - name: Upload V4 APK
+      - name: Upload V4.2 APK
         uses: actions/upload-artifact@v4
         with:
-          name: AI-Audio-Capture-V4-APK
+          name: AI-Audio-Capture-V4.2-APK
           path: project/app/build/outputs/apk/debug/*.apk
