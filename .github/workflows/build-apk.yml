@@ -1,0 +1,56 @@
+name: Build Android APK V4
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "AI-Audio-Capture-Diagnostic-V4.zip"
+      - ".github/workflows/build-apk.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check ZIP exists
+        run: |
+          ls -lh
+          test -f AI-Audio-Capture-Diagnostic-V4.zip
+
+      - name: Extract V4 project
+        run: |
+          rm -rf project
+          mkdir project
+          unzip -q AI-Audio-Capture-Diagnostic-V4.zip -d project
+
+      - name: Show project structure
+        run: |
+          find project -maxdepth 2 -type f | sort
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Download Gradle 9.6.1
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-9.6.1-bin.zip
+          unzip -q gradle-9.6.1-bin.zip
+          echo "$PWD/gradle-9.6.1/bin" >> "$GITHUB_PATH"
+
+      - name: Check Gradle
+        run: gradle --version
+
+      - name: Build V4 APK
+        working-directory: project
+        run: gradle assembleDebug --no-daemon
+
+      - name: Upload V4 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Audio-Capture-V4-APK
+          path: project/app/build/outputs/apk/debug/*.apk
